@@ -4,7 +4,7 @@
 import csv
 import matplotlib.pyplot as plt
 
-print("Projetct 01 - Gustavo Almeia Pinto Coelho")
+print("Projetct 01 - Gustavo Almeida Pinto Coelho")
 # Let's read the data as a list
 print("\nReading the document...")
 with open("chicago.csv", "r") as file_read:
@@ -73,8 +73,8 @@ def column_to_list(data, index):
 
     column_list = []
     # Tip: You can use a for to iterate over the samples, get the feature by index and append into a list
-    for i in range(len(data)):
-        column_list.append(data[i][index])
+    for row in range(len(data)):
+        column_list.append(data[row][index])
     
     return column_list
 
@@ -93,8 +93,17 @@ input("Press Enter to continue...")
 # Now we know how to access the features, let's count how many Males and Females the dataset have
 # TASK 4
 # TODO: Count each gender. You should not use a function to do that.
-male = column_to_list(data_list, -2).count('Male')
-female = column_to_list(data_list, -2).count('Female')
+
+male = 0
+female = 0
+
+list_values = column_to_list(data_list, -2)
+
+for row in range(len(list_values)):
+        if list_values[row] == 'Male':
+            male += 1
+        elif list_values[row] == 'Female':
+            female += 1
 
 # Checking the result
 print("\nTASK 4: Printing how many males and females we found")
@@ -122,8 +131,16 @@ def count_gender(data_list):
 
     """
 
-    male = column_to_list(data_list, -2).count('Male')
-    female = column_to_list(data_list, -2).count('Female')
+    male = 0
+    female = 0
+
+    list_values = column_to_list(data_list, -2)
+
+    for row in range(len(list_values)):
+            if list_values[row] == 'Male':
+                male += 1
+            elif list_values[row] == 'Female':
+                female += 1
 
     return [male, female]
 
@@ -158,9 +175,8 @@ def most_popular_gender(data_list):
     
     answer = ""
     
-    male = count_gender(data_list)[0]
-    female = count_gender(data_list)[1]
-
+    male, female = count_gender(data_list)
+    
     if male > female:
         answer = "Male"
     elif male == female:
@@ -196,15 +212,39 @@ input("Press Enter to continue...")
 # TODO: Plot a similar graph for user_types. Make sure the legend is correct.
 print("\nTASK 7: Check the chart!")
 
-gender_list = column_to_list(data_list, -3)
-types = ["Subscriber", "Customer"]
-quantity = count_gender(data_list)
+def types_count(column_list):
+
+    """This function count types without hardcoding the types.
+
+    INPUT:
+    column_list: list. List of types.
+    
+    OUTPUT: 
+    types_name: list. List of types.
+    types_count: list. List of count types.
+    
+    """
+
+    types_name = set(column_list)
+    types_count = []
+    type_count = 0
+    
+    for type_name in types_name:
+        for row in range(len(column_list)):
+                if column_list[row] == type_name:
+                    type_count += 1
+        types_count.append(type_count)
+        type_count = 0
+        
+    return types_name, types_count
+
+types, quantity = types_count(column_to_list(data_list, -3))
 y_pos = list(range(len(types)))
 plt.bar(y_pos, quantity)
 plt.ylabel('Quantity')
-plt.xlabel('User Types')
+plt.xlabel('Types')
 plt.xticks(y_pos, types)
-plt.title('Quantity by User Types')
+plt.title('Quantity by Types')
 plt.show(block=True)
 
 input("Press Enter to continue...")
@@ -231,6 +271,7 @@ min_trip = 0.
 max_trip = 0.
 mean_trip = 0.
 median_trip = 0.
+trip_sum = 0.
 
 # Min Trip
 for trip in trip_duration_list:
@@ -247,7 +288,11 @@ for trip in trip_duration_list:
         max_trip = int(trip)
 
 # Mean Trip
-mean_trip = round(sum(int(trip) for trip in trip_duration_list) / float(len(trip_duration_list)))
+
+for trip in trip_duration_list:
+    trip_sum += float(trip)
+
+mean_trip = round(trip_sum / float(len(trip_duration_list)))
 
 # Median Trip
 
@@ -319,11 +364,16 @@ def count_items(column_list):
     """
 
     item_types = set(column_list)
-    print(item_types)
     count_items = []
-
-    for item_type in item_types:
-        count_items.append(column_list.count(item_type))
+    count_type = 0
+    
+    
+    for type_name in item_types:
+        for row in range(len(column_list)):
+                if column_list[row] == type_name:
+                    count_type += 1
+        count_items.append(count_type)
+        count_type = 0
         
     return item_types, count_items
 
